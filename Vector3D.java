@@ -3,27 +3,38 @@ package src;
 public class Vector3D extends SpatialBase {
 
     
-    // >>>>> Construtor <<<<<
+    // ==========================================================
+    // >>>>> Construtor
+    // ==========================================================
+
     public Vector3D(double x, double y, double z){
         super(x,y,z);
     }
 
-    // >>>>> Soma Vetor <<<<<
+    // ==========================================================
+    // >>>>> Soma de vetores
+    // ==========================================================
     public Vector3D add(Vector3D v){
         return new Vector3D(x + v.x, y + v.y, z + v.z);
     }
 
-    // >>>>> Subtrai Vetor <<<<<
+    // ==========================================================
+    // >>>>> Subtracao de vetores
+    // ==========================================================
     public Vector3D subtract(Vector3D v){
         return new Vector3D( x - v.x , y - v.y, z - v.z);
     }
 
-    // >>>>> Produto Escalar (dot) <<<<<
+    // ==========================================================
+    // >>>>> Produto Escalar (dot)
+    // ==========================================================
     public double dot(Vector3D v){
         return x * v.x + y * v.y + z *v.z;
     }
 
-    // >>>>> Produto Vetorial (cross) <<<<<
+    // ==========================================================
+    // >>>>> Produto Vetorial (cross)
+    // ==========================================================
     public Vector3D cross(Vector3D v){
         return new Vector3D(
             y * v.z - z * v.y,
@@ -32,26 +43,46 @@ public class Vector3D extends SpatialBase {
         );
     }
 
-    // >>>>> Norma <<<<<
+    // ==========================================================
+    // >>>>> Norma
+    // ==========================================================
     public double magnitude() {
         return Math.hypot(x, Math.hypot(y, z));
     }
 
+    // ==========================================================
+    // >>>>> Norma ao quadrado (para fugir de calculo de raiz)
+    // ==========================================================
+    public double magnitudeSquared() {
+        return x*x + y*y + z*z;
+    }
 
-    // >>>>> Normalizar <<<<<
+    // ==========================================================
+    // >>>>> Normaliza Vetor
+    // ==========================================================
     public Vector3D normalize() {
         double m = magnitude();
         if (m < EPSILON) return new Vector3D(0, 0, 0); // eivtar divisão por 0
         return new Vector3D(x / m, y / m, z / m);
     }
 
+    // ==========================================================
+    // >>>>> Distancia entre vetores
+    // ==========================================================
+    public double distanceTo(Vector3D v) {
+        return this.subtract(v).magnitude();
+    }
 
-    // >>>>> Multiplicação por escalar <<<<<
+    // ==========================================================
+    // >>>>> Multiplica por escalar
+    // ==========================================================
     public Vector3D scale(double s) {
         return new Vector3D(x * s, y * s, z * s);
     }
 
-    // >>>>> Angulo entre vetores (em radianos) <<<<<
+    // ==========================================================
+    // >>>>> Angulo Entre vetores
+    // ==========================================================
     public double angleTo(Vector3D v){
         double dot = this.dot(v); // u.v
         double mag = this.magnitude() * v.magnitude(); // ∣∣u∣∣⋅∣∣v∣∣
@@ -65,9 +96,11 @@ public class Vector3D extends SpatialBase {
 
     }
 
-    // >>>>> Projecao Vetorial <<<<<
+    // ==========================================================
+    // >>>>> Projeta um vetor em outro
+    // ==========================================================
     public Vector3D projectOnto(Vector3D v){
-        double magSquared = v.x*v.x + v.y*v.y + v.z*v.z;
+        double magSquared = v.magnitudeSquared();
 
         if (magSquared < EPSILON) return new Vector3D(0, 0, 0);
 
@@ -76,7 +109,27 @@ public class Vector3D extends SpatialBase {
 
     }
 
-    // >>>>> Comparação de igualdade entre vetores <<<<<
+    // ==========================================================
+    // >>>>> Retorna o vetor como um ponto
+    // ==========================================================
+    public Point3D toPoint(){
+        return new Point3D(x, y, z);
+    }
+
+
+    // ==========================================================
+    // >>>>> Reflexão Vetorial (Reflete este vetor na normal 'n')
+    // ==========================================================
+    public Vector3D reflect(Vector3D n) {
+        Vector3D nomalized_n = n.normalize(); // vetor n necessita ser unitario (normalizado)
+        double dot_un = this.dot(nomalized_n); // u . n
+        Vector3D scaled_n = nomalized_n.scale(2.0 * dot_un); // 2 * (u . n) * n
+        return this.subtract(scaled_n); // u - 2 * (u . n) * n
+    }
+
+    // ==========================================================
+    // >>>>> Igualdade entre os Vetores
+    // ==========================================================
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -93,7 +146,9 @@ public class Vector3D extends SpatialBase {
             Math.abs(this.z - other.z) < EPSILON;
     }
 
-    // >>>>> Hashcode (Implementação Corrigida para EPSILON) <<<<<
+    // ==========================================================
+    // >>>>> HashCode
+    // ==========================================================
     @Override
     public int hashCode() {
         // Usa Math.floor() para agrupar valores dentro do intervalo EPSILON (bucketing), 
@@ -111,7 +166,9 @@ public class Vector3D extends SpatialBase {
     }
 
 
-    // >>>>> retorna o vetor como uma String <<<<<
+    // ==========================================================
+    // >>>>> Retorna vetor como uma string
+    // ==========================================================
     @Override
     public String toString(){
         return "Vector(" + x + ", " + y + ", " + z + ")";

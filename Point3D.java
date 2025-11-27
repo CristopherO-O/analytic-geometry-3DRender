@@ -2,12 +2,16 @@ package src;
 
 public class Point3D  extends SpatialBase{
 
-    // >>>>> Construtor <<<<<
+    // ==========================================================
+    // >>>>> Construtor
+    // ==========================================================
     public Point3D(double x, double y, double z) {
         super(x,y,z);
     }
 
-    // >>>>> distancia entre dois pontos <<<<<
+    // ==========================================================
+    // >>>>> Distancia entre dois pontos
+    // ==========================================================    
     public double distanceTo(Point3D other) {
         double dx = this.x - other.x;
         double dy = this.y - other.y;
@@ -15,13 +19,31 @@ public class Point3D  extends SpatialBase{
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
-    //  >>>>> converte ponto para vetor <<<<<
+    // ==========================================================
+    // >>>>> retorna o ponto como um vetor
+    // ==========================================================
     public Vector3D toVector() {
         return new Vector3D(x, y, z);
     }
-    
-    
-    // >>>>> Comparação de igualdade entre pontos <<<<<
+
+    // ==========================================================
+    // >>>>> Ponto + Vetor 
+    // ==========================================================
+
+    public Point3D add(Vector3D v) {
+        return new Point3D(this.x + v.getX(), this.y + v.getY(), this.z + v.getZ());
+    }
+
+    // ==========================================================
+    // >>>>> Ponto - Ponto (deslocamento)
+    // ==========================================================
+    public Vector3D subtract(Point3D other) {
+        return new Vector3D(this.x - other.x, this.y - other.y, this.z - other.z);
+    }
+
+    // ==========================================================
+    // >>>>> igualdade entre pontos
+    // ==========================================================
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -37,7 +59,9 @@ public class Point3D  extends SpatialBase{
         Math.abs(this.z - other.z) < EPSILON;
     }
 
-    // >>>>> Hashcode (Implementação Corrigida para EPSILON) <<<<<
+    // ==========================================================
+    // >>>>> HashCode 
+    // ==========================================================
     @Override
     public int hashCode() {
         // Usa Math.floor() para agrupar valores dentro do intervalo EPSILON (bucketing), 
@@ -55,7 +79,9 @@ public class Point3D  extends SpatialBase{
     }
 
 
-    // >>>>> converte o ponto para uma string <<<<<
+    // ==========================================================
+    // >>>>> Retorna o ponto como uma string
+    // ==========================================================
     @Override
     public String toString(){
         return "Point(" + x + ", " + y + ", " + z + ")";

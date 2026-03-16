@@ -9,29 +9,29 @@ public class Camera {
     private Vector3D up;
     private Vector3D u, v, n;
 
-    // campos para controle de órbita
+    // Campos para controle de órbita.
     private double theta = Math.PI / 4;
     private double phi = Math.PI / 4;
     private double radius = 15.0;
 
     // ==========================================================
-    // >>>>> Construtor
+    // Construtor.
     // ==========================================================
     public Camera(Point3D target, double radius) {
         this.target = target;
         this.radius = radius;
         this.up = new Vector3D(0, 1, 0);
-        updatePositionFromSpherical(); // Calcula a posição inicial
+        updatePositionFromSpherical(); // Calcula a posição inicial.
     }
 
     // ==========================================================
-    // >>>>> Controle da orbita da câmera
+    // Controle da orbita da câmera.
     // ==========================================================
     public void orbit(double deltaTheta, double deltaPhi) {
         this.theta += deltaTheta;
         this.phi += deltaPhi;
 
-        // Limita o ângulo vertical para não "capotar" a câmera (singularidade)
+        // Limita o ângulo vertical para não "capotar" a câmera (singularidade).
         double limit = Math.PI / 2 - 0.1;
         if (this.phi > limit) this.phi = limit;
         if (this.phi < -limit) this.phi = -limit;
@@ -40,7 +40,7 @@ public class Camera {
     }
     
     // ==========================================================
-    // >>>>> Controle do zoom da camera
+    // Controle do zoom da camera.
     // ==========================================================
     public void zoom(double amount) {
         this.radius = Math.max(1.0, this.radius + amount);
@@ -49,45 +49,45 @@ public class Camera {
 
 
     // ==========================================================
-    // >>>>> Atualiza a posição da câmera com base nos ângulos
+    // Atualiza a posição da câmera com base nos ângulos.
     // ==========================================================
     private void updatePositionFromSpherical() {
-        // Conversão de Coordenadas Esféricas para Cartesianas
+        // Conversão de Coordenadas Esféricas para Cartesianas.
         double x = radius * Math.cos(phi) * Math.cos(theta);
         double y = radius * Math.sin(phi);
         double z = radius * Math.cos(phi) * Math.sin(theta);
         
-        // Atualiza a posição e recalcula os eixos ortonormais
+        // Atualiza a posição e recalcula os eixos ortonormais.
         this.position = new Point3D(x, y, z);
         computeAxes();
     }
 
     // ==========================================================
-    // >>>>> Calcula os eixos
+    // Calcula os eixos.
     // ==========================================================
     private void computeAxes(){
-        // n (Z da camera) = normalize(pos-target)
+        // N (Z da camera) = normalize(pos-target).
         n = position.subtract(target).normalize();
-        // u (X da camera) = normalize(up x n)
+        // U (X da camera) = normalize(up x n).
         u = up.cross(n).normalize();
-        // v (Y da camera) = normalize(n x u)
+        // V (Y da camera) = normalize(n x u).
         v = n.cross(u).normalize();
     }
 
     // ==========================================================
-    // >>>>> Projecao ortografica (converte 3d pra 2d da tela)
+    // Projecao ortografica (converte 3d pra 2d da tela).
     // ==========================================================
     public double[] projectOrtographic(Point3D worldPoint){
         Vector3D w = worldPoint.subtract(position);
 
-        // projeta o vetor do ponto nos eixos U e V da camera
+        // Projeta o vetor do ponto nos eixos U e V da camera.
         double screenX = w.dot(u);
         double screenY = w.dot(v);
         return new double[]{screenX, screenY};
     }
 
     // ==========================================================
-    // >>>>> Getters
+    // Getters.
     // ==========================================================
     public Point3D getPosition() { return position; }
     public Point3D getTarget() { return target; }
@@ -98,7 +98,7 @@ public class Camera {
     public double getRadius() { return radius; }
 
     // ==========================================================
-    // >>>>> Setters
+    // Setters.
     // ==========================================================
     public void setPosition(Point3D position) {
         this.position = position;

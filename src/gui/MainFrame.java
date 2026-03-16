@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame(Camera cam, Scene scene) {
 
-        // Fonte mais moderna
+        // Fonte mais moderna.
         UIManager.put("Label.font", new Font("Segoe UI", Font.PLAIN, 13));
         UIManager.put("Button.font", new Font("Segoe UI", Font.PLAIN, 13));
         UIManager.put("TabbedPane.font", new Font("Segoe UI", Font.PLAIN, 13));

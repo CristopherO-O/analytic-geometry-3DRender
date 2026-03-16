@@ -10,7 +10,7 @@ import src.gui.panels.SceneListPanel;
 public class PlaneDialog {
 
     // ==========================================================
-    // >>>>> DIALOG DE CRIAÇÃO DE PLANO
+    // >>>>> DIALOG DE CRIACAO DE PLANO
     // ==========================================================
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,

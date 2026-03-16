@@ -2,14 +2,14 @@ package src.core;
 
 public abstract class SpatialBase {
 
-    // ----- tolerancia para erros de ponto flutuante -----
+    //  - tolerancia para erros de ponto flutuante -.
     protected static final double EPSILON = 1e-9;
 
-    // ----- Pos -----
+    //  - Pos -.
     protected final double x, y, z;
 
     // ==========================================================
-    // >>>>> Construtor
+    // Construtor.
     // ==========================================================
     public SpatialBase(double x, double y, double z) {
         this.x = x;
@@ -18,7 +18,7 @@ public abstract class SpatialBase {
     }
 
     // ==========================================================
-    // >>>>> Getters
+    // Getters.
     // ==========================================================
     public static double getEpsilon() { return EPSILON; }
     public double getX() { return x; }

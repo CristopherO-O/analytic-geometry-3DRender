@@ -10,7 +10,7 @@ import src.gui.panels.SceneListPanel;
 public class LineDialog {
 
     // ==========================================================
-    // >>>>> DIALOG DE CRIACAO DE RETA
+    // DIALOG DE CRIACAO DE RETA.
     // ==========================================================
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,

@@ -3,14 +3,14 @@ package src.core;
 public class Point3D  extends SpatialBase{
 
     // ==========================================================
-    // >>>>> Construtor
+    // Construtor.
     // ==========================================================
     public Point3D(double x, double y, double z) {
         super(x,y,z);
     }
 
     // ==========================================================
-    // >>>>> Distancia entre dois pontos
+    // Distância entre dois pontos.
     // ==========================================================    
     public double distanceTo(Point3D other) {
         double dx = this.x - other.x;
@@ -20,14 +20,14 @@ public class Point3D  extends SpatialBase{
     }
 
     // ==========================================================
-    // >>>>> retorna o ponto como um vetor
+    // Retorna o ponto como um vetor.
     // ==========================================================
     public Vector3D toVector() {
         return new Vector3D(x, y, z);
     }
 
     // ==========================================================
-    // >>>>> Ponto + Vetor 
+    // Ponto + Vetor.
     // ==========================================================
 
     public Point3D add(Vector3D v) {
@@ -35,14 +35,14 @@ public class Point3D  extends SpatialBase{
     }
 
     // ==========================================================
-    // >>>>> Ponto - Ponto (deslocamento)
+    // Ponto - Ponto (deslocamento).
     // ==========================================================
     public Vector3D subtract(Point3D other) {
         return new Vector3D(this.x - other.x, this.y - other.y, this.z - other.z);
     }
 
     // ==========================================================
-    // >>>>> igualdade entre pontos
+    // Igualdade entre pontos.
     // ==========================================================
     @Override
     public boolean equals(Object obj) {
@@ -60,17 +60,17 @@ public class Point3D  extends SpatialBase{
     }
 
     // ==========================================================
-    // >>>>> HashCode 
+    // HashCode.
     // ==========================================================
     @Override
     public int hashCode() {
-        // Usa Math.floor() para agrupar valores dentro do intervalo EPSILON (bucketing), 
-        // garantindo que pontos 'iguais' pelo EPSILON tenham o mesmo hash.
+        // Usa Math.floor() para agrupar valores dentro do intervalo EPSILON (bucketing),.
+        // Garantindo que pontos 'iguais' pelo EPSILON tenham o mesmo hash.
         long qx = (long) Math.floor(x / EPSILON);
         long qy = (long) Math.floor(y / EPSILON);
         long qz = (long) Math.floor(z / EPSILON);
 
-        // Combina os longos de forma padrão (similar ao Objects.hash)
+        // Combina os longos de forma padrão (similar ao Objects.hash).
         int result = 17;
         result = 31 * result + (int) (qx ^ (qx >>> 32));
         result = 31 * result + (int) (qy ^ (qy >>> 32));
@@ -80,7 +80,7 @@ public class Point3D  extends SpatialBase{
 
 
     // ==========================================================
-    // >>>>> Retorna o ponto como uma string
+    // Retorna o ponto como uma string.
     // ==========================================================
     @Override
     public String toString(){

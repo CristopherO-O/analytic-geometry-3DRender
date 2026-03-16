@@ -7,6 +7,9 @@ import src.gui.panels.*;
 
 public class SceneManagerPanel extends JPanel {
 
+    // ==========================================================
+    // CONSTRUTOR.
+    // ==========================================================
     public SceneManagerPanel(Scene scene, RenderCanvas canvas){
 
         setLayout(new BorderLayout());
@@ -23,7 +26,7 @@ public class SceneManagerPanel extends JPanel {
         JTabbedPane tabs = new JTabbedPane();
 
         tabs.addTab("Adicionar", addPanel);
-        tabs.addTab("Operações", new OperationsPanel());
+        tabs.addTab("Operações", new OperationsPanel(scene, canvas));
         tabs.addTab("Cena", listPanel);
 
         add(tabs, BorderLayout.CENTER);

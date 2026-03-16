@@ -10,7 +10,7 @@ import src.gui.dialogs.*;
 public class AddEntityPanel extends JPanel {
 
     // ==========================================================
-    // >>>>> CONSTRUTOR
+    // CONSTRUTOR.
     // ==========================================================
     public AddEntityPanel(Scene scene, RenderCanvas canvas, SceneListPanel listPanel){
         
@@ -21,6 +21,7 @@ public class AddEntityPanel extends JPanel {
         JButton btnPoint = createButton("Novo Ponto");
         JButton btnLine = createButton("Nova Reta");
         JButton btnPlane = createButton("Novo Plano");
+        JButton btnVector = createButton("Novo Vetor");
 
         btnPoint.addActionListener(e ->
         PointDialog.show(this, scene, canvas, listPanel)
@@ -34,13 +35,18 @@ public class AddEntityPanel extends JPanel {
             PlaneDialog.show(this, scene, canvas, listPanel)
         );
 
+        btnVector.addActionListener(e ->
+            VectorDialog.show(this, scene, canvas, listPanel)
+        );
+
         add(btnPoint);
         add(btnLine);
         add(btnPlane);
+        add(btnVector);
     }
 
     // ==========================================================
-    // >>>>> CRIA BOTOES
+    // CRIA BOTOES.
     // ==========================================================
     private JButton createButton(String text){
 

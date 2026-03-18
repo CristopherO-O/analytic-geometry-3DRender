@@ -1,10 +1,10 @@
-# GARender - Geometria Analítica 3D 📐🧊
+# GARender - Geometria Analítica 3D
 
 O **GARender** é um motor de renderização 3D e uma ferramenta interativa de geometria analítica desenvolvida inteiramente do zero em Java. Sem depender de bibliotecas gráficas 3D externas, o projeto implementa a sua própria matemática de projeção em perspetiva, álgebra linear e renderização em ecrã através do Java Swing. 
 
 Este projeto foi desenhado para facilitar a visualização e o cálculo de operações espaciais, servindo como uma ferramenta de apoio prático e visual, especialmente alinhada com os tópicos de Álgebra Linear e Geometria Analítica.
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 * **Renderização 3D do Zero:** Implementação própria de projeções de perspetiva, transformando coordenadas esféricas e cartesianas do espaço 3D para o plano 2D.
 * **Câmara Interativa:** Controlo de órbita fluido (arrastar com o rato) e zoom (roda do rato), permitindo a navegação livre pelo espaço tridimensional.
@@ -20,7 +20,7 @@ Este projeto foi desenhado para facilitar a visualização e o cálculo de opera
   * Álgebra Vetorial (Soma, Subtração, Produto Escalar, Produto Vetorial, Projeção e Reflexão).
   * Projeções geométricas na cena visual.
 
-## 📂 Estrutura do Projeto
+## Estrutura do Projeto
 
 A arquitetura do código está dividida em pacotes lógicos para separar a matemática pura da interface gráfica:
 
@@ -29,7 +29,7 @@ A arquitetura do código está dividida em pacotes lógicos para separar a matem
 * `src.camera`: Contém a lógica de transformação, matrizes da câmara e matemática de projeção em perspetiva.
 * `src.gui`: Toda a interface gráfica interativa construída em Java Swing, incluindo o canvas de renderização (`RenderCanvas`), painéis de gestão e caixas de diálogo para criação de entidades.
 
-## 🚀 Como Executar
+## Como Executar
 
 Como o projeto é escrito em Java puro (Standard Edition), não necessita de configurações complexas de dependências ou motores de jogo externos.
 

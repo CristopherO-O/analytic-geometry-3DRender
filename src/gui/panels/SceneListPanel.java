@@ -183,7 +183,7 @@ public class SceneListPanel extends JPanel {
                 });
             }
             
-            // 2. PONTO & VETOR (BÔNUS!)
+            // 2. PONTO & VETOR
             else if ((o1 instanceof Point3D && o2 instanceof Vector3D) || (o1 instanceof Vector3D && o2 instanceof Point3D)) {
                 Point3D pt = (Point3D) (o1 instanceof Point3D ? o1 : o2);
                 Vector3D vec = (Vector3D) (o1 instanceof Vector3D ? o1 : o2);
@@ -257,7 +257,7 @@ public class SceneListPanel extends JPanel {
                     if (denom > 1e-6) {
                         double t1 = (v1.dot(v2)*v2.dot(w0) - v2.dot(v2)*v1.dot(w0)) / denom;
                         double t2 = (v1.dot(v1)*v2.dot(w0) - v1.dot(v2)*v1.dot(w0)) / denom;
-                        canvas.showTemporaryLine(l1.pointAt(t1), l2.pointAt(t2), 4000);
+                        canvas.showTemporaryLine(l1.pointAt(t1), l2.pointAt(t2), 8000);
                     }
                 });
                 

@@ -12,7 +12,10 @@ public class Camera {
     // Campos para controle de órbita.
     private double theta = Math.PI / 4;
     private double phi = Math.PI / 4;
-    private double radius = 15.0;
+    private double radius = 15.0; // Mantemos o raio fixo para orbitar sempre à mesma distância
+
+    // Novo: Distância Focal (Controla o "Zoom" e a intensidade da Perspectiva)
+    private double d = 800.0; 
 
     // ==========================================================
     // Construtor.
@@ -40,13 +43,12 @@ public class Camera {
     }
     
     // ==========================================================
-    // Controle do zoom da camera.
+    // Controle do zoom da camera
     // ==========================================================
     public void zoom(double amount) {
-        this.radius = Math.max(1.0, this.radius + amount);
-        updatePositionFromSpherical();
-    }
 
+        this.d = Math.max(50.0, this.d - (amount * 50.0));
+    }
 
     // ==========================================================
     // Atualiza a posição da câmera com base nos ângulos.
@@ -75,19 +77,39 @@ public class Camera {
     }
 
     // ==========================================================
-    // Projecao ortografica (converte 3d pra 2d da tela).
+    // NOVA PROJEÇÃO: Perspectiva (Com profundidade)
+    // ==========================================================
+    public double[] projectPerspective(Point3D worldPoint){
+        Vector3D w = worldPoint.subtract(position);
+
+        // Projeta nos eixos da câmera
+        double xCam = w.dot(u);
+        double yCam = w.dot(v);
+        double zCam = w.dot(n); // Esta é a profundidade do objeto em relação à lente!
+
+        // Evita divisão por zero e inversão de imagem se o ponto passar para trás da câmera
+        if (zCam >= 0) zCam = -0.1;
+
+        // Dividimos as coordenadas X e Y pela profundidade (Z) absoluto
+        // Multiplicamos por 'd' para aplicar o fator de zoom/lente
+        double screenX = (xCam * d) / Math.abs(zCam);
+        double screenY = (yCam * d) / Math.abs(zCam);
+
+        return new double[]{screenX, screenY};
+    }
+
+    // ==========================================================
+    // ANTIGA: Projecao ortografica (converte 3d pra 2d da tela sem profundidade).
     // ==========================================================
     public double[] projectOrtographic(Point3D worldPoint){
         Vector3D w = worldPoint.subtract(position);
-
-        // Projeta o vetor do ponto nos eixos U e V da camera.
         double screenX = w.dot(u);
         double screenY = w.dot(v);
         return new double[]{screenX, screenY};
     }
 
     // ==========================================================
-    // Getters.
+    // Getters e Setters
     // ==========================================================
     public Point3D getPosition() { return position; }
     public Point3D getTarget() { return target; }
@@ -97,22 +119,7 @@ public class Camera {
     public Vector3D getN() { return n; }
     public double getRadius() { return radius; }
 
-    // ==========================================================
-    // Setters.
-    // ==========================================================
-    public void setPosition(Point3D position) {
-        this.position = position;
-        computeAxes();
-    }
-
-    public void setTarget(Point3D target) {
-        this.target = target;
-        computeAxes();
-    }
-
-    public void setUp(Vector3D up) {
-        this.up = up;
-        computeAxes();
-    }
-
+    public void setPosition(Point3D position) { this.position = position; computeAxes(); }
+    public void setTarget(Point3D target) { this.target = target; computeAxes(); }
+    public void setUp(Vector3D up) { this.up = up; computeAxes(); }
 }

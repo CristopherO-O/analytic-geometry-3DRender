@@ -70,7 +70,7 @@ public class RenderCanvas extends JPanel {
 
         int centerX = getWidth() / 2;
         int centerY = getHeight() / 2;
-        double scale = 750.0 / camera.getRadius();
+        double scale = 1.0;
 
         drawAxis(g2, new Point3D(5,0,0), new Color(220,80,80), "X", centerX, centerY, scale);
         drawAxis(g2, new Point3D(0,5,0), new Color(80,200,120), "Y", centerX, centerY, scale);
@@ -80,7 +80,7 @@ public class RenderCanvas extends JPanel {
 
         // 1. Pontos.
         for(Point3D p : scene.getPoints()){
-            double[] proj = camera.projectOrtographic(p);
+            double[] proj = camera.projectPerspective(p);
             int x = centerX + (int)(proj[0] * scale);
             int y = centerY - (int)(proj[1] * scale);
             
@@ -173,8 +173,8 @@ public class RenderCanvas extends JPanel {
     }
 
     private void renderLine(Graphics2D g2, Point3D p1, Point3D p2, int cx, int cy, double s){
-        double[] proj1 = camera.projectOrtographic(p1);
-        double[] proj2 = camera.projectOrtographic(p2);
+        double[] proj1 = camera.projectPerspective(p1);
+        double[] proj2 = camera.projectPerspective(p2);
         g2.drawLine(cx + (int)(proj1[0]*s), cy - (int)(proj1[1]*s), cx + (int)(proj2[0]*s), cy - (int)(proj2[1]*s));
     }
 
@@ -187,8 +187,8 @@ public class RenderCanvas extends JPanel {
     }
 
     private void drawAxis(Graphics2D g2, Point3D end, Color color, String label, int cx, int cy, double s){
-        double[] p0 = camera.projectOrtographic(new Point3D(0,0,0));
-        double[] p1 = camera.projectOrtographic(end);
+        double[] p0 = camera.projectPerspective(new Point3D(0,0,0));
+        double[] p1 = camera.projectPerspective(end);
         g2.setColor(color);
         g2.drawLine(cx + (int)(p0[0]*s), cy - (int)(p0[1]*s), cx + (int)(p1[0]*s), cy - (int)(p1[1]*s));
         g2.drawString(label, cx + (int)(p1[0]*s), cy - (int)(p1[1]*s));
@@ -197,8 +197,8 @@ public class RenderCanvas extends JPanel {
     private void drawVector(Graphics2D g2, Point3D origin, Vector3D vector, int cx, int cy, double s, Color color) {
         g2.setColor(color);
         Point3D endPoint = origin.add(vector); 
-        double[] pStart = camera.projectOrtographic(origin);
-        double[] pEnd = camera.projectOrtographic(endPoint);
+        double[] pStart = camera.projectPerspective(origin);
+        double[] pEnd = camera.projectPerspective(endPoint);
         int x1 = cx + (int)(pStart[0] * s); int y1 = cy - (int)(pStart[1] * s);
         int x2 = cx + (int)(pEnd[0] * s); int y2 = cy - (int)(pEnd[1] * s);
         

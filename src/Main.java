@@ -17,7 +17,7 @@ public class Main {
         Scene scene = new Scene();
         
         // Plano de exemplo.
-        scene.addPlane(new Plane3D(new Point3D(0, 0, 0), new Vector3D(0, 1, 0)));
+        //scene.addPlane(new Plane3D(new Point3D(0, 0, 0), new Vector3D(0, 0, 1)));
 
         // 3. Lançamento da Interface Gráfica.
         SwingUtilities.invokeLater(() -> {

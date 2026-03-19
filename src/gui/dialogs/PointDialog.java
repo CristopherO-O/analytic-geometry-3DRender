@@ -7,11 +7,18 @@ import src.entities.Scene;
 import src.gui.RenderCanvas;
 import src.gui.panels.SceneListPanel;
 
+/**
+ * Dialog helper to add a new point to the scene.
+ */
 public class PointDialog {
 
-    // ==========================================================
-    // DIALOG DE CRIACAO DE PONTO.
-    // ==========================================================
+    /**
+     * Shows point input dialog and adds point to scene.
+     * @param parent parent component
+     * @param scene scene to update
+     * @param canvas canvas to repaint
+     * @param listPanel panel list to refresh
+     */
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,
                             SceneListPanel listPanel){

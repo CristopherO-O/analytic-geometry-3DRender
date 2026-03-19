@@ -8,10 +8,13 @@ import src.gui.dialogs.*;
 
 
 public class AddEntityPanel extends JPanel {
-
-    // ==========================================================
-    // CONSTRUTOR.
-    // ==========================================================
+    
+    /**
+     * Creates panel with add entity buttons.
+     * @param scene scene to modify
+     * @param canvas canvas to repaint
+     * @param listPanel list panel to refresh
+     */
     public AddEntityPanel(Scene scene, RenderCanvas canvas, SceneListPanel listPanel){
         
         setLayout(new GridLayout(3,1,10,10));
@@ -45,9 +48,11 @@ public class AddEntityPanel extends JPanel {
         add(btnVector);
     }
 
-    // ==========================================================
-    // CRIA BOTOES.
-    // ==========================================================
+    /**
+     * Creates a styled button.
+     * @param text button text
+     * @return configured JButton
+     */
     private JButton createButton(String text){
 
         JButton b = new JButton(text);

@@ -4,129 +4,122 @@ import src.core.Point3D;
 import src.core.SpatialBase;
 import src.core.Vector3D;
 
+/**
+ * Representa uma reta no espaco 3D definida por um ponto e um vetor diretor.
+ * A reta e parametrizada como: P(t) = P0 + t * d
+ */
 public class Line3D {
-    
-    //  - pos -.
+
     private final Point3D point;
     private final Vector3D dir;
 
-    // ==========================================================
-    // Construtor (Ponto + Vetor).
-    // ==========================================================
+    /**
+     * Cria uma reta a partir de um ponto e um vetor diretor.
+     *
+     * @param point ponto pertencente a reta
+     * @param dir vetor diretor (nao pode ser nulo)
+     */
     public Line3D(Point3D point, Vector3D dir){
         if (dir.magnitude() < SpatialBase.getEpsilon()) {
-            throw new IllegalArgumentException("O vetor diretor não pode ser nulo para definir uma reta.");
+            throw new IllegalArgumentException("Vetor diretor nao pode ser nulo.");
         }
         this.point = point;
         this.dir = dir.normalize();
     }
 
-    // ==========================================================
-    // Construtor (dois pontos distintos).
-    // ==========================================================
+    /**
+     * Cria uma reta a partir de dois pontos distintos.
+     *
+     * @param p1 primeiro ponto
+     * @param p2 segundo ponto
+     */
     public Line3D(Point3D p1, Point3D p2){
-        Vector3D v = p1.toVector().subtract(p2.toVector()); 
+        Vector3D v = p2.subtract(p1); // mais intuitivo: p1 -> p2
         
         if (v.magnitude() < SpatialBase.getEpsilon()) {
-            throw new IllegalArgumentException("Os dois pontos devem ser distintos para definir uma reta.");
+            throw new IllegalArgumentException("Os pontos devem ser distintos.");
         }
-        
+
         this.point = p1;
-        this.dir = v.normalize(); // Normaliza o vetor diretor.
+        this.dir = v.normalize();
     }
 
-    // ==========================================================
-    // Ponto parametrico da Reta.
-    // ==========================================================
+    /**
+     * Retorna um ponto da reta para um parametro t.
+     *
+     * @param t parametro da reta
+     * @return ponto correspondente a P(t)
+     */
     public Point3D pointAt(double t){
-        Vector3D tv = this.dir.scale(t);  
-        return this.point.add(tv);
+        return this.point.add(this.dir.scale(t));
     }
 
-    
-    // ==========================================================
-    // Verifica se o ponto está sobre a reta.
-    // ==========================================================
-    public boolean contains(Point3D P) {
-        return this.distanceTo(P) < SpatialBase.getEpsilon();
+    /**
+     * Verifica se um ponto pertence a reta (com tolerancia).
+     */
+    public boolean contains(Point3D p) {
+        return this.distanceTo(p) < SpatialBase.getEpsilon();
     }
-    
-    // ==========================================================
-    // Angulo entre retas.
-    // ==========================================================
+
+    /**
+     * Calcula o angulo entre esta reta e outra.
+     */
     public double angleTo(Line3D other) {
         return this.dir.angleTo(other.dir);
     }
 
-    // ==========================================================
-    // Verifica paralelismo.
-    // ==========================================================
+    /**
+     * Verifica se duas retas sao paralelas.
+     */
     public boolean isParallel(Line3D other) {
-        // O produto vetorial de vetores paralelos resulta em um vetor nulo.
-        Vector3D crossProduct = this.dir.cross(other.dir);
-        return crossProduct.magnitude() < SpatialBase.getEpsilon();
+        return this.dir.cross(other.dir).magnitude() < SpatialBase.getEpsilon();
     }
 
-    // ==========================================================
-    // Verifica Ortogonalidade.
-    // ==========================================================
+    /**
+     * Verifica se duas retas sao ortogonais.
+     */
     public boolean isOrthogonal(Line3D other) {
-        // O produto escalar de vetores perpendiculares é zero.
-        double dotProduct = this.dir.dot(other.dir);
-        return Math.abs(dotProduct) < SpatialBase.getEpsilon();
+        return Math.abs(this.dir.dot(other.dir)) < SpatialBase.getEpsilon();
     }
 
-    // ==========================================================
-    // Ditancias entre a reta e um ponto.
-    // ==========================================================
+    /**
+     * Calcula a distancia de um ponto ate a reta.
+     */
     public double distanceTo(Point3D p){
-        Vector3D P_minus_P0 = p.subtract(this.point);
-        Vector3D crossp =  P_minus_P0.cross(this.dir);
-        return crossp.magnitude();
+        Vector3D diff = p.subtract(this.point);
+        return diff.cross(this.dir).magnitude();
     }
 
-    // ==========================================================
-    // Distância entre duas retas.
-    // ==========================================================
+    /**
+     * Calcula a distancia entre duas retas.
+     * Funciona tanto para retas paralelas quanto reversas.
+     */
     public double distanceTo(Line3D other) {
-        Vector3D P1P2 = other.point.subtract(this.point);
-        
         if (this.isParallel(other)) {
-            return other.distanceTo(this.point); // Caso paralelo.
-        } else {
-            // Caso reversas.
-            Vector3D normal = this.dir.cross(other.dir);
-            double normalMagnitude = normal.magnitude();
-            
-            // Se a magnitude for nula, as retas são paralelas ou incidentes (caso já coberto).
-            if (normalMagnitude < SpatialBase.getEpsilon()) {
-                // Se o produto vetorial é quase zero, as retas são paralelas ou se cruzam.
-                // Se cruzarem, a distância é 0. Se forem paralelas, a distância já foi calculada.
-                // Aqui, podemos retornar a distância do ponto para a reta, pois elas não são puramente reversas.
-                return other.distanceTo(this.point);
-            }
-
-            // 5. Produto Escalar Triplo: |(P1P2 . n)|.
-            double numerator = Math.abs(P1P2.dot(normal));
-            
-            return numerator / normalMagnitude;
+            return other.distanceTo(this.point);
         }
+
+        Vector3D p1p2 = other.point.subtract(this.point);
+        Vector3D normal = this.dir.cross(other.dir);
+
+        double normalMagnitude = normal.magnitude();
+
+        if (normalMagnitude < SpatialBase.getEpsilon()) {
+            return other.distanceTo(this.point);
+        }
+
+        return Math.abs(p1p2.dot(normal)) / normalMagnitude;
     }
 
-    // ==========================================================
-    // Getter.
-    // ==========================================================
+    // GETTERS
     public Point3D getPoint() { return point; }
     public Vector3D getDirection() { return dir; }
 
-
-    // ==========================================================
-    // Retorna a reta como String.
-    // ==========================================================
+    /**
+     * Retorna representacao textual da reta.
+     */
     @Override
     public String toString() {
-        return "Line3D{P0=" + point + ", v=" + dir + "}";
+        return "Line3D{P0=" + point + ", d=" + dir + "}";
     }
-
-
 }

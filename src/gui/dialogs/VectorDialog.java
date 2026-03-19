@@ -7,8 +7,18 @@ import src.entities.Scene;
 import src.gui.RenderCanvas;
 import src.gui.panels.SceneListPanel;
 
+/**
+ * Dialog helper to add a new vector to the scene.
+ */
 public class VectorDialog {
 
+    /**
+     * Shows vector input dialog and adds vector to scene.
+     * @param parent parent component
+     * @param scene scene to update
+     * @param canvas canvas to repaint
+     * @param listPanel panel list to refresh
+     */
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,
                             SceneListPanel listPanel) {

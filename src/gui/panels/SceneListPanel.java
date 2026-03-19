@@ -11,6 +11,9 @@ import src.core.Point3D;
 import src.core.Vector3D;
 import src.gui.RenderCanvas;
 
+/**
+ * Panel that lists scene entities and provides quick context operations.
+ */
 public class SceneListPanel extends JPanel {
 
     private Scene scene;
@@ -18,6 +21,11 @@ public class SceneListPanel extends JPanel {
     private DefaultListModel<String> listModel;
     private JList<String> entityList;
 
+    /**
+     * Creates the entity list panel.
+     * @param scene scene to manipulate
+     * @param canvas canvas to repaint after changes
+     */
     public SceneListPanel(Scene scene, RenderCanvas canvas){
         this.scene = scene;
         this.canvas = canvas;
@@ -37,23 +45,30 @@ public class SceneListPanel extends JPanel {
             }
         });
 
+    
         entityList.addMouseListener(new MouseAdapter() {
             @Override
+    
+    
+    
+            /**
+             * Handles right-click context menu and selection bounding.
+             */
             public void mousePressed(MouseEvent e) {
                 int index = entityList.locationToIndex(e.getPoint());
                 
-                // Limpa a seleção se clicar no vazio.
+                
                 if (index != -1) {
                     Rectangle cellBounds = entityList.getCellBounds(index, index);
                     if (cellBounds != null && !cellBounds.contains(e.getPoint())) {
                         entityList.clearSelection();
-                        return; // Sai se clicou no vazio.
+                        return; 
                     }
                 }
 
-                // LÓGICA DO BOTÃO DIREITO (MENU DE CONTEXTO).
+                
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    // Se clicou com o direito num item que não estava selecionado, seleciona só ele.
+                    
                     if (index != -1 && !entityList.isSelectedIndex(index)) {
                         entityList.setSelectedIndex(index);
                     }
@@ -82,16 +97,21 @@ public class SceneListPanel extends JPanel {
 
         refreshList();
     }
-
+ 
+    /**
+     * Reloads the list model from the scene entity names.
+     */
     public void refreshList(){
         listModel.clear();
         for(String name : scene.getEntityNames())
             listModel.addElement(name);
     }
-
-    // ==========================================================
-    // MÉTODO AUXILIAR PARA PEGAR O OBJETO PELO ÍNDICE.
-    // ==========================================================
+    
+    /**
+     * Returns the entity object at a global index in the scene list.
+     * @param index entity index
+     * @return object for selected entity
+     */
     private Object getEntityAt(int index) {
         int p = scene.getPoints().size();
         int l = scene.getLines().size();
@@ -103,23 +123,22 @@ public class SceneListPanel extends JPanel {
         return scene.getVectors().get(index - p - l - pl);
     }
 
-    // ==========================================================
-    // GERA O MENU DE CONTEXTO DINÂMICO.
-    // ==========================================================
-    // ==========================================================
-    // GERA O MENU DE CONTEXTO DINÂMICO.
-    // ==========================================================
+    /**
+     * Shows context menu for selected entities and operations.
+     * @param x x position in component
+     * @param y y position in component
+     */
     private void showContextMenu(int x, int y) {
         int[] indices = entityList.getSelectedIndices();
         JPopupMenu popup = new JPopupMenu();
 
-        // >>> OPERAÇÕES PARA TRÊS ENTIDADES SELECIONADAS <<<
+        
         if (indices.length == 3) {
             Object o1 = getEntityAt(indices[0]);
             Object o2 = getEntityAt(indices[1]);
             Object o3 = getEntityAt(indices[2]);
 
-            // 3 PONTOS
+            
             if (o1 instanceof Point3D && o2 instanceof Point3D && o3 instanceof Point3D) {
                 Point3D p1 = (Point3D) o1; Point3D p2 = (Point3D) o2; Point3D p3 = (Point3D) o3;
                 
@@ -128,6 +147,7 @@ public class SceneListPanel extends JPanel {
                         scene.addPlane(new Plane3D(p1, p2, p3));
                         refreshList(); canvas.repaint();
                         showMessage("Plano criado com sucesso a partir dos pontos!");
+    
                     } catch (Exception ex) {
                         showMessage("Erro ao criar Plano: " + ex.getMessage());
                     }
@@ -137,23 +157,23 @@ public class SceneListPanel extends JPanel {
                 empty.setEnabled(false);
                 popup.add(empty);
             }
-        }
-        
-        // >>> OPERAÇÕES PARA DUAS ENTIDADES SELECIONADAS <<<
+        }       
+    
         else if (indices.length == 2) {
             Object o1 = getEntityAt(indices[0]);
             Object o2 = getEntityAt(indices[1]);
 
-            // 1. PONTO & PONTO.
+            
             if (o1 instanceof Point3D && o2 instanceof Point3D) {
                 Point3D p1 = (Point3D) o1; Point3D p2 = (Point3D) o2;
                 
-                // Opções de Criação
+                
                 addMenuItem(popup, "Criar Reta (Passando por P1 e P2)", () -> {
                     try {
                         scene.addLine(new Line3D(p1, p2));
                         refreshList(); canvas.repaint();
                         showMessage("Reta criada com sucesso!");
+    
                     } catch (Exception ex) {
                         showMessage("Erro ao criar Reta: " + ex.getMessage());
                     }
@@ -166,9 +186,9 @@ public class SceneListPanel extends JPanel {
                     showMessage("Vetor criado com sucesso!\n" + v.toString());
                 });
 
-                popup.addSeparator(); // Separa a criação das operações matemáticas
+                popup.addSeparator(); 
                 
-                // Opções Matemáticas
+                
                 addMenuItem(popup, "Calcular Distância", () -> {
                     showMessage("Distância: " + String.format("%.4f", p1.distanceTo(p2)));
                     canvas.showTemporaryLine(p1, p2, 4000);
@@ -183,7 +203,8 @@ public class SceneListPanel extends JPanel {
                 });
             }
             
-            // 2. PONTO & VETOR
+            
+    
             else if ((o1 instanceof Point3D && o2 instanceof Vector3D) || (o1 instanceof Vector3D && o2 instanceof Point3D)) {
                 Point3D pt = (Point3D) (o1 instanceof Point3D ? o1 : o2);
                 Vector3D vec = (Vector3D) (o1 instanceof Vector3D ? o1 : o2);
@@ -193,6 +214,7 @@ public class SceneListPanel extends JPanel {
                         scene.addLine(new Line3D(pt, vec));
                         refreshList(); canvas.repaint();
                         showMessage("Reta criada com sucesso!");
+    
                     } catch (Exception ex) {
                         showMessage("Erro: " + ex.getMessage());
                     }
@@ -203,13 +225,15 @@ public class SceneListPanel extends JPanel {
                         scene.addPlane(new Plane3D(pt, vec));
                         refreshList(); canvas.repaint();
                         showMessage("Plano criado com sucesso!");
+    
                     } catch (Exception ex) {
                         showMessage("Erro: " + ex.getMessage());
                     }
                 });
             }
             
-            // 3. PONTO & RETA.
+            
+    
             else if ((o1 instanceof Point3D && o2 instanceof Line3D) || (o1 instanceof Line3D && o2 instanceof Point3D)) {
                 Point3D pt = (Point3D) (o1 instanceof Point3D ? o1 : o2);
                 Line3D ln = (Line3D) (o1 instanceof Line3D ? o1 : o2);
@@ -224,7 +248,8 @@ public class SceneListPanel extends JPanel {
                 });
             }
 
-            // 4. PONTO & PLANO.
+            
+    
             else if ((o1 instanceof Point3D && o2 instanceof Plane3D) || (o1 instanceof Plane3D && o2 instanceof Point3D)) {
                 Point3D pt = (Point3D) (o1 instanceof Point3D ? o1 : o2);
                 Plane3D pl = (Plane3D) (o1 instanceof Plane3D ? o1 : o2);
@@ -244,7 +269,8 @@ public class SceneListPanel extends JPanel {
                 });
             }
 
-            // 5. RETA & RETA.
+            
+    
             else if (o1 instanceof Line3D && o2 instanceof Line3D) {
                 Line3D l1 = (Line3D) o1; Line3D l2 = (Line3D) o2;
                 
@@ -267,7 +293,8 @@ public class SceneListPanel extends JPanel {
                 });
             }
 
-            // 6. RETA & PLANO.
+            
+    
             else if ((o1 instanceof Line3D && o2 instanceof Plane3D) || (o1 instanceof Plane3D && o2 instanceof Line3D)) {
                 Line3D ln = (Line3D) (o1 instanceof Line3D ? o1 : o2);
                 Plane3D pl = (Plane3D) (o1 instanceof Plane3D ? o1 : o2);
@@ -283,7 +310,8 @@ public class SceneListPanel extends JPanel {
                 });
             }
 
-            // 7. VETOR & VETOR.
+            
+    
             else if (o1 instanceof Vector3D && o2 instanceof Vector3D) {
                 Vector3D v1 = (Vector3D) o1; Vector3D v2 = (Vector3D) o2;
                 
@@ -301,8 +329,7 @@ public class SceneListPanel extends JPanel {
                 });
             }
         } 
-        
-        // >>> OPERAÇÕES PARA UMA ENTIDADE SELECIONADA <<<
+    
         else if (indices.length == 1) {
             Object o = getEntityAt(indices[0]);
             if (o instanceof Vector3D) {
@@ -324,15 +351,27 @@ public class SceneListPanel extends JPanel {
         if (popup.getComponentCount() > 0) {
             popup.show(entityList, x, y);
         }
-    }
-
-    // Método utilitário para criar os botões do menu mais limpos.
+    } 
+    
+    /**
+     * Adds a menu item with action to a popup menu.
+     * @param menu target popup menu
+     * @param text label text
+     * @param action callback action
+     */
     private void addMenuItem(JPopupMenu menu, String text, Runnable action) {
         JMenuItem item = new JMenuItem(text);
         item.addActionListener(e -> action.run());
         menu.add(item);
     }
 
+    
+    
+    
+    /**
+     * Displays a result message in a dialog.
+     * @param msg message text
+     */
     private void showMessage(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Resultado", JOptionPane.INFORMATION_MESSAGE);
     }

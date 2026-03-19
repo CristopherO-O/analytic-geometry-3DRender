@@ -9,33 +9,59 @@ import src.entities.Plane3D;
 import src.entities.Scene;
 import src.camera.Camera;
 
+/**
+ * Canvas that renders 3D scene entities using camera projection.
+ */
 public class RenderCanvas extends JPanel {
 
     private Camera camera;
     private Scene scene;
 
-    //  - AGORA É UM ARRAY PARA SUPORTAR MULTIPLAS SELEÇÕES -.
+    
     private int[] selectedIndices = new int[0]; 
     
     private Point3D tempStart = null;
     private Point3D tempEnd = null;
     private Timer tempTimer = null;
 
+    
+    
+    
+    /**
+     * Creates a render canvas with camera and scene.
+     * @param camera camera used for projection
+     * @param scene scene containing points, lines, planes, vectors
+     */
     public RenderCanvas(Camera camera, Scene scene) {
         this.camera = camera;
         this.scene = scene;
         setBackground(new Color(40,44,52));
     }
 
-    // ==========================================================
-    // RECEBE O ARRAY DE ÍNDICES DA LISTA.
-    // ==========================================================
+    
+    
+    
+    
+    
+    
+    /**
+     * Set list selection indices and repaint canvas.
+     * @param indices selected entity indices
+     */
     public void setSelectedIndices(int[] indices) {
         this.selectedIndices = (indices != null) ? indices : new int[0];
         repaint(); 
     }
 
-    // Método auxiliar para checar se o índice atual está na lista dos selecionados.
+    
+    
+    
+    
+    /**
+     * Check if index is currently selected.
+     * @param index candidate entity index
+     * @return true if selected
+     */
     private boolean isIndexSelected(int index) {
         for (int i : selectedIndices) {
             if (i == index) return true;
@@ -43,6 +69,15 @@ public class RenderCanvas extends JPanel {
         return false;
     }
 
+    
+    
+    
+    /**
+     * Show a temporary line on canvas between two points.
+     * @param p1 start point
+     * @param p2 end point
+     * @param durationMs duration in milliseconds
+     */
     public void showTemporaryLine(Point3D p1, Point3D p2, int durationMs) {
         this.tempStart = p1;
         this.tempEnd = p2;
@@ -60,6 +95,13 @@ public class RenderCanvas extends JPanel {
     }
 
     @Override
+    
+    
+    
+    /**
+     * Paints all scene entities and temporary highlights.
+     * @param g graphics context
+     */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -78,13 +120,13 @@ public class RenderCanvas extends JPanel {
 
         int currentIndex = 0;
 
-        // 1. Pontos.
+        
         for(Point3D p : scene.getPoints()){
-            double[] proj = camera.projectPerspective(p);
+            double[] proj = camera.project(p);
             int x = centerX + (int)(proj[0] * scale);
             int y = centerY - (int)(proj[1] * scale);
             
-            // USA O NOVO MÉTODO DE CHECAGEM.
+            
             if (isIndexSelected(currentIndex)) {
                 g2.setColor(Color.YELLOW);
                 g2.fillOval(x - 6, y - 6, 12, 12); 
@@ -95,7 +137,7 @@ public class RenderCanvas extends JPanel {
             currentIndex++;
         }
 
-        // 2. Retas.
+        
         for(Line3D line : scene.getLines()){
             Point3D pStart = line.pointAt(-100);
             Point3D pEnd = line.pointAt(100);
@@ -112,14 +154,14 @@ public class RenderCanvas extends JPanel {
             currentIndex++;
         }
 
-        // 3. Planos.
+        
         for(Plane3D plane : scene.getPlanes()){
             boolean isSelected = isIndexSelected(currentIndex);
             drawPlaneGrid(g2, plane, centerX, centerY, scale, isSelected);
             currentIndex++;
         }
 
-        // 4. Vetores.
+        
         for(Vector3D v : scene.getVectors()) {
             Color color;
             if (isIndexSelected(currentIndex)) {
@@ -135,13 +177,19 @@ public class RenderCanvas extends JPanel {
             currentIndex++;
         }
 
-        // 5. Linha Tracejada Temporária.
+        
         if (tempStart != null && tempEnd != null) {
             g2.setColor(new Color(255, 80, 80)); 
             drawDashedLine(g2, tempStart, tempEnd, centerX, centerY, scale);
         }
     }
 
+    
+    
+    
+    /**
+     * Draws a plane grid at the plane location for visualization.
+     */
     private void drawPlaneGrid(Graphics2D g2, Plane3D plane, int cx, int cy, double s, boolean isSelected){
         Vector3D n = plane.getNormal();
         Vector3D v1;
@@ -172,12 +220,24 @@ public class RenderCanvas extends JPanel {
         g2.setStroke(new BasicStroke(1.0f)); 
     }
 
+    
+    
+    
+    /**
+     * Renders a line segment projected from 3D endpoints.
+     */
     private void renderLine(Graphics2D g2, Point3D p1, Point3D p2, int cx, int cy, double s){
-        double[] proj1 = camera.projectPerspective(p1);
-        double[] proj2 = camera.projectPerspective(p2);
+        double[] proj1 = camera.project(p1);
+        double[] proj2 = camera.project(p2);
         g2.drawLine(cx + (int)(proj1[0]*s), cy - (int)(proj1[1]*s), cx + (int)(proj2[0]*s), cy - (int)(proj2[1]*s));
     }
 
+    
+    
+    
+    /**
+     * Draws a dashed line between two projected 3D points.
+     */
     private void drawDashedLine(Graphics2D g2, Point3D p1, Point3D p2, int cx, int cy, double s) {
         Stroke oldStroke = g2.getStroke(); 
         float[] dashPattern = {5f, 5f};
@@ -186,19 +246,31 @@ public class RenderCanvas extends JPanel {
         g2.setStroke(oldStroke); 
     }
 
+    
+    
+    
+    /**
+     * Draws coordinate axis line and label.
+     */
     private void drawAxis(Graphics2D g2, Point3D end, Color color, String label, int cx, int cy, double s){
-        double[] p0 = camera.projectPerspective(new Point3D(0,0,0));
-        double[] p1 = camera.projectPerspective(end);
+        double[] p0 = camera.project(new Point3D(0,0,0));
+        double[] p1 = camera.project(end);
         g2.setColor(color);
         g2.drawLine(cx + (int)(p0[0]*s), cy - (int)(p0[1]*s), cx + (int)(p1[0]*s), cy - (int)(p1[1]*s));
         g2.drawString(label, cx + (int)(p1[0]*s), cy - (int)(p1[1]*s));
     }
 
+    
+    
+    
+    /**
+     * Draws a 3D vector from origin in projected coordinates.
+     */
     private void drawVector(Graphics2D g2, Point3D origin, Vector3D vector, int cx, int cy, double s, Color color) {
         g2.setColor(color);
         Point3D endPoint = origin.add(vector); 
-        double[] pStart = camera.projectPerspective(origin);
-        double[] pEnd = camera.projectPerspective(endPoint);
+        double[] pStart = camera.project(origin);
+        double[] pEnd = camera.project(endPoint);
         int x1 = cx + (int)(pStart[0] * s); int y1 = cy - (int)(pStart[1] * s);
         int x2 = cx + (int)(pEnd[0] * s); int y2 = cy - (int)(pEnd[1] * s);
         
@@ -214,4 +286,16 @@ public class RenderCanvas extends JPanel {
         g2.drawLine(x2, y2, x3, y3);
         g2.drawLine(x2, y2, x4, y4);
     }
+
+    
+    
+    
+    /**
+     * Returns the render camera.
+     * @return current Camera
+     */
+    public Camera getCamera() { 
+        return camera; 
+    }
 }
+

@@ -4,126 +4,120 @@ import src.core.Point3D;
 import src.core.SpatialBase;
 import src.core.Vector3D;
 
+/**
+ * Representa um plano no espaco 3D.
+ * 
+ * O plano e definido por um ponto e um vetor normal,
+ * seguindo a equacao: n . P + d = 0
+ */
 public class Plane3D {
-    
-    //  - pos -.
+
     private final Point3D point;
     private final Vector3D normal;
     private final double d;
 
-    // ==========================================================
-    // Construtor 1: Ponto + Vetor Normal
-    // ==========================================================
+    /**
+     * Cria um plano a partir de um ponto e um vetor normal.
+     */
     public Plane3D(Point3D point, Vector3D normal) {
         if (normal.magnitude() < SpatialBase.getEpsilon()) {
-            throw new IllegalArgumentException("O vetor normal não pode ser nulo.");
+            throw new IllegalArgumentException("Vetor normal nao pode ser nulo.");
         }
+
         this.point = point;
         this.normal = normal.normalize();
-        
-        // Calcula a constante d = - (n . P0).
-        this.d = -this.normal.dot(this.point.toVector());
+        this.d = -this.normal.dot(point.toVector());
     }
 
-    // ==========================================================
-    // Construtor 2: Três Pontos Distintos
-    // ==========================================================
+    /**
+     * Cria um plano a partir de tres pontos nao colineares.
+     */
     public Plane3D(Point3D p1, Point3D p2, Point3D p3) {
-        // Cria dois vetores no plano (v1 e v2).
-        Vector3D v1 = p2.subtract(p1); // P2 - P1.
-        Vector3D v2 = p3.subtract(p1); // P3 - P1.
-        
-        // Calcula o vetor normal.
+        Vector3D v1 = p2.subtract(p1);
+        Vector3D v2 = p3.subtract(p1);
+
         Vector3D normalVector = v1.cross(v2);
 
         if (normalVector.magnitude() < SpatialBase.getEpsilon()) {
-            throw new IllegalArgumentException("Os três pontos são colineares e não definem um plano.");
+            throw new IllegalArgumentException("Pontos colineares nao definem plano.");
         }
-        
-        // Normaliza e define o ponto de passagem.
+
         this.normal = normalVector.normalize();
         this.point = p1;
-        
-        // Calcula a constante d.
-        this.d = -this.normal.dot(this.point.toVector());
+        this.d = -this.normal.dot(point.toVector());
     }
 
-    // ==========================================================
-    // Calcula a menor distância assinada (signed distance).
-    // ==========================================================
-    public double distanceTo(Point3D P) {
-        // A equação do plano é n.P + d = 0.
-        // A distância assinada é o resultado desta expressão para o ponto P.
-        return this.normal.dot(P.toVector()) + this.d;
+    /**
+     * Retorna a distancia assinada de um ponto ao plano.
+     */
+    public double distanceTo(Point3D p) {
+        return this.normal.dot(p.toVector()) + this.d;
     }
 
-    // ==========================================================
-    // Verifica se a reta Contem um ponto.
-    // ==========================================================
-    public boolean contains(Point3D P) {
-        // Se a distância do ponto ao plano for próxima de zero, ele pertence ao plano.
-        return Math.abs(this.distanceTo(P)) < SpatialBase.getEpsilon();
+    /**
+     * Verifica se um ponto pertence ao plano.
+     */
+    public boolean contains(Point3D p) {
+        return Math.abs(distanceTo(p)) < SpatialBase.getEpsilon();
     }
 
-    // ==========================================================
-    // Paralelismo.
-    // ==========================================================
-    // Verifica Paralelismo com Outro Plano.
+    /**
+     * Verifica se dois planos sao paralelos.
+     */
     public boolean isParallel(Plane3D other) {
-        // Planos são paralelos se seus vetores normais são paralelos (produto vetorial nulo).
-        Vector3D crossProduct = this.normal.cross(other.normal);
-        return crossProduct.magnitude() < SpatialBase.getEpsilon();
+        return this.normal.cross(other.normal).magnitude() < SpatialBase.getEpsilon();
     }
 
-    // Verifica Paralelismo com uma Reta.
+    /**
+     * Verifica se uma reta e paralela ao plano.
+     */
     public boolean isParallel(Line3D line) {
-        // Um plano é paralelo a uma reta se o vetor normal (n) é ortogonal ao vetor diretor da reta (v).
-        double dotProduct = this.normal.dot(line.getDirection());
-        return Math.abs(dotProduct) < SpatialBase.getEpsilon();
+        return Math.abs(this.normal.dot(line.getDirection())) < SpatialBase.getEpsilon();
     }
 
-    // ==========================================================
-    // Projeta ponto no plano.
-    // ==========================================================
-    public Point3D project(Point3D P) {
-        double signedDistance = this.distanceTo(P);
-        Vector3D correctionVector = this.normal.scale(-signedDistance);
-        return P.add(correctionVector);
+    /**
+     * Projeta um ponto no plano.
+     */
+    public Point3D project(Point3D p) {
+        double dist = distanceTo(p);
+        return p.add(this.normal.scale(-dist));
     }
 
-    // ==========================================================
-    // Encontra ponto de interseção com uma reta.
-    // ==========================================================
+    /**
+     * Calcula a intersecao entre o plano e uma reta.
+     * Retorna null se nao houver intersecao.
+     */
     public Point3D intersectionWith(Line3D line) {
         Vector3D v = line.getDirection();
-        double dot_vn = v.dot(this.normal);
-        
-        if (Math.abs(dot_vn) < SpatialBase.getEpsilon()) {
-            // Se a reta é paralela e passa pelo ponto do plano, ela está contida no plano.
+        double denom = v.dot(this.normal);
+
+        if (Math.abs(denom) < SpatialBase.getEpsilon()) {
+            // reta paralela ao plano
             if (this.contains(line.getPoint())) {
-                return line.getPoint(); 
+                return line.getPoint(); // reta contida no plano
             }
-            // Reta paralela e fora do plano (sem interseção).
-            return null; 
+            return null;
         }
-        
-        Vector3D P0_minus_P = this.point.subtract(line.getPoint()); 
-        double t = P0_minus_P.dot(this.normal) / dot_vn;
+
+        Vector3D diff = this.point.subtract(line.getPoint());
+        double t = diff.dot(this.normal) / denom;
+
         return line.pointAt(t);
     }
 
-    // ==========================================================
-    // Getters e toString.
-    // ==========================================================
-    
+    // GETTERS
     public Point3D getPoint() { return point; }
     public Vector3D getNormal() { return normal; }
     public double getD() { return d; }
 
+    /**
+     * Retorna representacao textual do plano.
+     */
     @Override
     public String toString() {
-        return String.format("Plane3D{n=(%.2f, %.2f, %.2f), d=%.2f, P0=%s}",
-                             normal.getX(), normal.getY(), normal.getZ(), d, point.toString());
+        return String.format(
+            "Plane3D{n=(%.2f, %.2f, %.2f), d=%.2f, P0=%s}",
+            normal.getX(), normal.getY(), normal.getZ(), d, point
+        );
     }
-
 }

@@ -7,11 +7,18 @@ import src.entities.*;
 import src.gui.RenderCanvas;
 import src.gui.panels.SceneListPanel;
 
+/**
+ * Dialog to create a plane entity in the scene.
+ */
 public class PlaneDialog {
 
-    // ==========================================================
-    // >>>>> DIALOG DE CRIACAO DE PLANO
-    // ==========================================================
+    /**
+     * Shows plane dialog and adds plane to scene.
+     * @param parent parent component
+     * @param scene scene to update
+     * @param canvas canvas to repaint
+     * @param listPanel list panel to refresh
+     */
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,
                             SceneListPanel listPanel){

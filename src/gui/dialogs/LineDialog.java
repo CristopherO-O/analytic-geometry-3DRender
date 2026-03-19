@@ -7,11 +7,18 @@ import src.entities.*;
 import src.gui.RenderCanvas;
 import src.gui.panels.SceneListPanel;
 
+/**
+ * Dialog to create a 3D line from point(s) or point+direction.
+ */
 public class LineDialog {
-
-    // ==========================================================
-    // DIALOG DE CRIACAO DE RETA.
-    // ==========================================================
+  
+    /**
+     * Shows line creation dialog and adds line to scene.
+     * @param parent parent component
+     * @param scene scene to update
+     * @param canvas canvas to repaint
+     * @param listPanel list panel to refresh
+     */
     public static void show(Component parent, Scene scene,
                             RenderCanvas canvas,
                             SceneListPanel listPanel){

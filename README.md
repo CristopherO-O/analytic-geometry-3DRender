@@ -37,4 +37,4 @@ Como o projeto é escrito em Java puro (Standard Edition), não necessita de con
 2. Clona o repositório ou descarrega os ficheiros de código-fonte.
 3. Compila o projeto a partir do diretório raiz (onde a pasta `src` está localizada):
    ```bash
-   javac -d bin src/*.java
+   javac -d bin src/*.java && java -cp bin src.Main
